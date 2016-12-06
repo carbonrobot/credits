@@ -1,40 +1,47 @@
-
-
-// test yaml
-// gzip
-// encode base64 url compact
+'use strict';
 
 const fs = require('fs');
-var zlib = require('zlib');
+const yaml = require('js-yaml');
+const schema = require('./src/schema');
+const compress = require('./src/compress');
 
 fs.readFile('test.yml', 'utf8', (err, data) => {
     if (err) throw err;
 
-    console.log('raw');
-    //console.log(data);
+    schema.validate(data, (err, result) => {
+        if (err) throw err;
+        
+        // yaml string
+        compress('gzip').pack(data, (err, packed) => {
+            if (err) throw err;
 
-    zlib.gzip(data, function (error, result) {
-        if (error) throw error;
-
-        console.log('compressed');
-        console.log(result);
-
-        var b64 = result.toString('base64');
-        console.log('base64');
-        console.log(b64);
-
-        console.log('length', b64.length);
-
-        // unpack
-        var buffer = new Buffer(b64, 'base64');
-        zlib.unzip(buffer, function(err, result){
-            if (error) throw error;
-
-            console.log('unpacked');
-            //console.log(result.toString('ascii'));
+            console.log(packed);
+            console.log('gzip/yaml length:', packed.length);
         });
 
+        // yaml -> json string
+        compress('gzip').pack(JSON.stringify(result), (err, packed) => {
+            if (err) throw err;
 
+            console.log(packed);
+            console.log('gzip/json length:', packed.length);
+        });
+
+        // msgpack
+        compress('msgpack').pack(result, (err, packed) => {
+            if (err) throw err;
+
+            console.log(packed);
+            console.log('mspk/json length:', packed.length);
+        });
+
+        // lzma
+        compress('lzma').pack(JSON.stringify(result), (err, packed) => {
+            if (err) throw err;
+
+            console.log(packed);
+            console.log('lzma/json length:', packed.length);
+        });
     });
 
 });

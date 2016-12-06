@@ -9,6 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "snappyjs": "^0.5.0"
+    "joi": "^10.0.5",
+    "js-yaml": "^3.7.0",
+    "lzma": "^2.3.2",
+    "msgpack-lite": "^0.1.26",
+    "snappyjs": "^0.5.0",
+    "urlsafe-base64": "^1.0.0"
   }
 }
